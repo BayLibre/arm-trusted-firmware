@@ -98,6 +98,12 @@ define IMG_BIN
     ${BUILD_PLAT}/bl$(1).bin
 endef
 
+# IMG_SREC defines the default srec file corresponding to a BL stage
+#   $(1) = BL stage (2, 30, 31, 32, 33)
+define IMG_SREC
+    ${BUILD_PLAT}/bl$(1).srec
+endef
+
 # TOOL_ADD_PAYLOAD appends the command line arguments required by fiptool to
 # package a new payload and/or by cert_create to generate certificate.
 # Optionally, it adds the dependency on this payload
@@ -363,6 +369,7 @@ define MAKE_BL
         $(eval ELF        := $(call IMG_ELF,$(1)))
         $(eval DUMP       := $(call IMG_DUMP,$(1)))
         $(eval BIN        := $(call IMG_BIN,$(1)))
+        $(eval SREC       := $(call IMG_SREC,$(1)))
         $(eval BL_LINKERFILE := $(BL$(call uppercase,$(1))_LINKERFILE))
         $(eval BL_LIBS    := $(BL$(call uppercase,$(1))_LIBS))
         # We use sort only to get a list of unique object directory names.
@@ -415,8 +422,12 @@ $(BIN): $(ELF)
 	@echo "Built $$@ successfully"
 	@${ECHO_BLANK_LINE}
 
+$(SREC): $(ELF)
+	@echo "  SREC    $$@"
+	$$(Q)$$(OC) -O srec $$< $$@
+
 .PHONY: bl$(1)
-bl$(1): $(BIN) $(DUMP)
+bl$(1): $(SREC) $(BIN) $(DUMP)
 
 all: bl$(1)
 
