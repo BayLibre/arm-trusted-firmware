@@ -11,6 +11,10 @@ build/
 
 # Ignore build products from tools
 tools/**/*.o
+tools/dummy_create/*.bin
+tools/dummy_create/*.srec
+tools/dummy_create/*.map
+tools/dummy_create/*.elf
 tools/fiptool/fiptool
 tools/fiptool/fiptool.exe
 tools/cert_create/src/*.o
